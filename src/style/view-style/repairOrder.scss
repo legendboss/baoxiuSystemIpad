@@ -1,0 +1,88 @@
+.repairOrder {
+    p {
+        margin: 0;
+    }
+
+    .repairOrder-box {
+        padding: 25px 35px;
+        background-color: #fff;
+        margin: 0 !important;
+
+        label {
+            width: 50px;
+            text-align: left;
+            display: inline-block;
+        }
+        .ant-select {
+            margin-right: 55px;
+        }
+
+        .add-repair {
+            margin: 25px 0;
+            width: 130px;
+        }
+    }
+}
+
+.add-repair-modal {
+    .ant-modal {
+        width: 600px !important;
+    }
+
+    .ant-form-item-label {
+        width: 90px;
+    }
+
+    .ant-rate {
+        vertical-align: super;
+        line-height: 22px;
+    }
+
+    .add-repair-sure {
+        margin-top: 25px;
+        float: right;
+    }
+}
+
+.repair-detail-modal {
+    .ant-modal {
+        width: 600px !important;
+    }
+
+    .rd-box {
+        max-height: 497px;
+        overflow-y: scroll;
+
+        .img-box {
+            img {
+                width: 100px;
+                height: 100px;
+                object-fit: contain;
+                margin: 0 24px 24px 0;
+            }
+        }
+    }
+
+    .ant-col {
+        margin-bottom: 20px;
+        color: rgba(0, 0, 0, 0.85);
+    }
+
+    .ant-col span:nth-of-type(1) {
+        vertical-align: top;
+    }
+
+    .ant-col span:nth-of-type(2) {
+        width: 200px;
+        display: inline-block;
+    }
+
+    .ant-form-item-label {
+        width: 90px;
+    }
+
+    .ant-rate {
+        vertical-align: super;
+        line-height: 22px;
+    }
+}

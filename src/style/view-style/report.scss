@@ -1,0 +1,38 @@
+.report {
+    p {
+        margin: 0;
+    }
+
+    .report-box {
+        padding: 25px 35px;
+        background-color: #fff;
+        margin: 0 !important;
+
+        label {
+            text-align: left;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .ant-select {
+            width: 200px;
+            margin-right: 55px;
+        }
+
+        .ant-picker {
+            margin-right: 55px;
+        }
+
+        .ant-radio-button-wrapper {
+            width: auto;
+        }
+
+        .ant-radio-group {
+            label {
+                text-align: left;
+                display: inline-block;
+                margin-right: 0px;
+            }
+        }
+    }
+}

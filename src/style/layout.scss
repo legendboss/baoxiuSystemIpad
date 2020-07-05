@@ -1,0 +1,167 @@
+.app {
+    font-size: 1.6rem;
+    @media screen and (max-width: 960px) {
+        font-size: 1.4rem;
+    }
+    .aside {
+        position: fixed;
+        left: 0;
+        height: 100vh;
+        overflow-y: auto;
+        background-image: linear-gradient(27deg, #0B74FF 5%, #3271FF 100%);
+        .logo {
+            width: 200px;
+            background: rgba(0,0,0,0.30);
+            height: 60px;
+            line-height: 60px;
+            box-sizing: border-box;
+            text-align: center;
+            color: #fff;
+            font-size: 16px;
+            img {
+                height: 100%;
+            }
+        }
+
+        .ant-menu {
+            .ant-menu-item {
+                width: 100%;
+                height: 60px;
+                margin: 0;
+                padding: 0 25px;
+
+                >a {
+                    font-size: 16px;
+                    line-height: 60px;
+
+                    .menu-icon {
+                        width: 24px;
+                        height: 24px;
+                        margin-right: 30px;
+                        vertical-align: -6px;
+                    }
+                }
+            }
+        }
+
+        .ant-menu-dark {
+            background-color: #2c71ff;
+
+            .ant-menu-item-selected {
+                background-color: #2a65e5 !important;
+            }
+        }
+    }
+
+    .header {
+        background-color: #fff;
+        padding: 0 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        .right {
+            display: flex;
+            align-items: center;
+
+            .ant-badge {
+                font-size: 16px;
+                top: 2px;
+            }
+
+            .ant-avatar {
+                width: 23px;
+                height: 23px;
+                line-height: 23px;
+                background-color: #eef0f3;
+
+            }
+            .ant-avatar-icon {
+                font-size: 18px;
+
+                .anticon-user svg {
+                    color: #000;
+                }
+            }
+
+            .user-name {
+                font-size: 14px;
+                color: rgba(0,0,0,0.65);
+                text-align: right;
+                margin-left: 10px;
+            }
+        }
+    }
+
+    .content {
+        padding: 25px;
+        width: auto !important;
+    }
+
+    .footer {
+        text-align: center;
+    }
+
+    .data-show {
+        p {
+            margin: 0;
+        }
+        .index-header {
+            color: #fff;
+            margin: 0px !important;
+    
+            .ant-col-6 {
+                padding: 0 !important;
+            }
+    
+            .base-style {
+                height: 106px;
+                box-shadow: none;
+                border-radius: 2px;
+                padding: 20px 0 20px 20px;
+                position: relative;
+                margin-bottom: 25px;
+    
+                p:nth-of-type(1){
+                    font-size: 16px;
+                    color: rgba(0,0,0,0.45);
+                    text-align: center;
+                    line-height: 22px;
+                    margin-bottom: 10px;
+                }
+                p:nth-of-type(2){
+                    font-size: 28px;
+                    color: #1973FF;
+                    text-align: center;
+                    line-height: 32px;
+                    font-weight: 500;
+                }
+            }
+    
+            .line {
+                width: 1px;
+                height: 58px;
+                background: #E8E8E8;
+                position: absolute;
+                right: 0;
+                top: 26px;
+            }
+    
+            .icon-style {
+                color: #fbfbf4b3;
+                font-size: 6rem;
+                padding-right: 1rem;
+            }
+        }
+    }
+
+}
+
+.change-password-modal {
+    label {
+        width: 100px;
+        text-align: right;
+        display: inline-block;
+    }
+    .ant-input {
+        width: 240px;
+    }
+}

@@ -1,0 +1,106 @@
+.index {
+    p {
+        margin: 0;
+    }
+    .index-header {
+        color: #fff;
+        margin: 0px !important;
+
+        .ant-col-6 {
+            padding: 0 !important;
+        }
+
+        .base-style {
+            height: 106px;
+            box-shadow: none;
+            border-radius: 2px;
+            padding: 20px 0 20px 20px;
+            position: relative;
+            margin-bottom: 25px;
+
+            p:nth-of-type(1) {
+                font-size: 16px;
+                color: rgba(0, 0, 0, 0.45);
+                text-align: center;
+                line-height: 22px;
+                margin-bottom: 10px;
+            }
+            p:nth-of-type(2) {
+                font-size: 28px;
+                color: #1973ff;
+                text-align: center;
+                line-height: 32px;
+                font-weight: 500;
+            }
+        }
+
+        .line {
+            width: 1px;
+            height: 58px;
+            background: #e8e8e8;
+            position: absolute;
+            right: 0;
+            top: 26px;
+        }
+
+        .icon-style {
+            color: #fbfbf4b3;
+            font-size: 6rem;
+            padding-right: 1rem;
+        }
+    }
+    .bar-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .index-box {
+        padding: 120px 215px 186px 215px;
+        background-color: #fff;
+        border-radius: 2px;
+        margin: 0 !important;
+        display: flex;
+        justify-content: space-between;
+
+        .ant-col {
+            width: 100px;
+        }
+
+        .items {
+            width: 100px;
+            height: 128px;
+            position: relative;
+
+            img {
+                display: block;
+                margin: 0 auto;
+            }
+
+            p {
+                font-size: 16px;
+                color: #595959;
+                text-align: center;
+                line-height: 32px;
+                margin-top: 12px;
+            }
+
+            .tip {
+                font-size: 14px;
+                color: #ffffff;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+                text-align: center;
+                line-height: 20px;
+                background: #ff4d4f;
+                position: absolute;
+                top: -15px;
+                right: -10px;
+            }
+        }
+    }
+    .ant-row::before,
+    .ant-row::after {
+        content: none;
+    }
+}
