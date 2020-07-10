@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
-import { Layout, Input, message, Spin, Empty, Pagination, Divider } from 'antd'
-import '@/style/view-style/knowledgeBase.scss'
+import { Layout, message, Spin, Pagination, Divider, Empty, Badge } from 'antd'
+import '@/style/view-style/newsList.scss'
 import axios from '@/api'
 import { APIPad } from '@/api/config'
-const { Search } = Input
 
-export default class KnowledgeBase extends Component {
+class NewsList extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -16,22 +15,21 @@ export default class KnowledgeBase extends Component {
             total: 0
         }
     }
-
     componentDidMount() {
-        this.getKnowledgeList()
+        // 获取列表
+        this.getNewsList()
     }
 
-    // 获取知识库列表
-    getKnowledgeList = value => {
+    // 获取消息列表
+    getNewsList = () => {
         const { startPage, pageSize } = this.state
         const model = {
-            keyWord: value || '',
             startPage,
             pageSize
         }
         this.setState({ listLoading: true })
         axios
-            .get(`${APIPad}/searchKnowledge`, { params: model })
+            .get(`${APIPad}/messageList`, { params: model })
             .then(res => {
                 const data = res.data.data
                 if (res.data.code === 200) {
@@ -49,42 +47,30 @@ export default class KnowledgeBase extends Component {
             })
     }
 
-    handleTableChange = (page, pageSize) => {
-        this.setState(
-            {
-                startPage: page,
-                pageSize: pageSize
-            },
-            () => {
-                this.getKnowledgeList()
-            }
-        )
-    }
-
     render() {
         const { listLoading, listData, total, startPage } = this.state
         return (
-            <Layout className='knowledgeBase animated fadeIn'>
-                <div className='knowledgeBase-box'>
-                    <div>
-                        <Search
-                            className='search-input'
-                            placeholder='请输入'
-                            enterButton='搜索'
-                            size='large'
-                            onSearch={value => {
-                                this.getKnowledgeList(value)
-                            }}
-                        />
-                    </div>
+            <Layout className='newsList animated fadeIn'>
+                <div className='newsList-box'>
                     <Spin spinning={listLoading}>
                         {listData.length > 0 ? (
                             <div className='text-box'>
                                 {listData.map((item, index) => {
                                     return (
                                         <div key={index}>
-                                            <p className='text-p'>{item.contentInfo}</p>
-                                            <Divider />
+                                            {item.isRead === 1 ? ( // 未读
+                                                <div>
+                                                    <Badge status='error' text={item.addTimeStr} />
+                                                    <p className='text-p'>{item.content}</p>
+                                                    <Divider />
+                                                </div>
+                                            ) : (
+                                                <div>
+                                                    <Badge status='default' text={item.addTimeStr} />
+                                                    <p className='text-p'>{item.content}</p>
+                                                    <Divider />
+                                                </div>
+                                            )}
                                         </div>
                                     )
                                 })}
@@ -108,3 +94,5 @@ export default class KnowledgeBase extends Component {
         )
     }
 }
+
+export default NewsList

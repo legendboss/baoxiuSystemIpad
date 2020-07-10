@@ -22,7 +22,7 @@ import locale from 'antd/es/date-picker/locale/zh_CN'
 import { PlusOutlined } from '@ant-design/icons'
 import debounce from 'lodash/debounce'
 import axios from '@/api'
-import { API } from '@/api/config'
+import { APIPad } from '@/api/config'
 import moment from 'moment'
 
 const { Option } = Select
@@ -120,7 +120,7 @@ export default class RepairOrder extends Component {
         console.log(model)
         this.setState({ listLoading: true })
         axios
-            .get(`${API}/orderList`, { params: model })
+            .get(`${APIPad}/orderList`, { params: model })
             .then(res => {
                 const data = res.data.data
                 if (res.data.code === 200) {
@@ -161,7 +161,7 @@ export default class RepairOrder extends Component {
             role: 2
         }
         axios
-            .get(`${API}/UserListMenu`, { params: model })
+            .get(`${APIPad}/UserListMenu`, { params: model })
             .then(res => {
                 const Data = res.data.data
                 if (res.data.code === 200) {
@@ -207,7 +207,7 @@ export default class RepairOrder extends Component {
             role: 1
         }
         axios
-            .get(`${API}/UserListMenu`, { params: model })
+            .get(`${APIPad}/UserListMenu`, { params: model })
             .then(res => {
                 const Data = res.data.data
                 if (res.data.code === 200) {
@@ -265,7 +265,7 @@ export default class RepairOrder extends Component {
             type: e.type
         }
         axios
-            .post(`${API}/addOrder`, model)
+            .post(`${APIPad}/addOrder`, model)
             .then(res => {
                 if (res.data.code === 200) {
                     this.onCloseResetModel()
@@ -292,7 +292,7 @@ export default class RepairOrder extends Component {
         this.setState({ repairDetailVisible: true })
         const model = { id }
         axios
-            .get(`${API}/orderInfo`, { params: model })
+            .get(`${APIPad}/orderInfo`, { params: model })
             .then(res => {
                 if (res.data.code === 200) {
                     this.setState({
@@ -553,7 +553,7 @@ export default class RepairOrder extends Component {
                                 <div>
                                     <Upload
                                         accept='image/*'
-                                        action={`${API}/upLoadPhoto`}
+                                        action={`${APIPad}/upLoadPhoto`}
                                         method='post'
                                         listType='picture-card'
                                         fileList={fileList}

@@ -3,7 +3,7 @@ import { Route, Switch, Redirect, withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { Layout, BackTop, message, Modal, Input } from 'antd'
 import axios from '@/api'
-import { API } from '@/api/config'
+import { APIPad, API } from '@/api/config'
 import routes from '@/routes'
 import { menuToggleAction } from '@/store/actionCreators'
 // import avatar from '@/assets/images/user.jpg'
@@ -16,7 +16,7 @@ import AppFooter from './AppFooter.jsx'
 import AppDataShow from './AppDataShow.jsx'
 
 const { Content } = Layout
-const ws = new WebSocket('ws://qikeqike.qicp.vip/count');
+const ws = new WebSocket('ws://qikeqike.qicp.vip/count')
 
 class DefaultLayout extends Component {
     state = {
@@ -33,16 +33,16 @@ class DefaultLayout extends Component {
 
     componentDidMount() {
         this.isLogin()
-        ws.onopen = function (e) {
-            console.log('连接上 ws 服务端了');
-            ws.send({});
+        ws.onopen = function(e) {
+            console.log('连接上 ws 服务端了')
+            ws.send({})
         }
-        ws.onmessage = (msg)=> { 
-            console.log('接收服务端发过来的消息: ', msg ); 
-        }; 
-        ws.onclose = function (e) {
-            console.log('ws 连接关闭了');
-            console.log(e);
+        ws.onmessage = msg => {
+            console.log('接收服务端发过来的消息: ', msg)
+        }
+        ws.onclose = function(e) {
+            console.log('ws 连接关闭了')
+            console.log(e)
         }
     }
 
@@ -59,8 +59,8 @@ class DefaultLayout extends Component {
         }
     }
 
-    // 
-    
+    //
+
     // 获取头部数据
     getTopData = () => {
         axios
@@ -86,10 +86,10 @@ class DefaultLayout extends Component {
 
     modifyPassword = () => {
         this.setState({
-            pwVisible: true,
-        });
+            pwVisible: true
+        })
     }
-    
+
     getMenu = menu => {
         let newMenu,
             auth = JSON.parse(localStorage.getItem('userName')).auth
@@ -102,53 +102,52 @@ class DefaultLayout extends Component {
     }
 
     // 旧密码输入
-    onOldPwChange = (e) => {
-        this.setState({oldPwd: e.target.value})
+    onOldPwChange = e => {
+        this.setState({ oldPwd: e.target.value })
     }
 
     // 新密码输入
-    onNewPwChange = (e) => {
-        this.setState({newPwd: e.target.value})
+    onNewPwChange = e => {
+        this.setState({ newPwd: e.target.value })
     }
 
     // 确认密码输入
-    onNewSurePwChange = (e) => {
-        this.setState({reNewPwd: e.target.value})
+    onNewSurePwChange = e => {
+        this.setState({ reNewPwd: e.target.value })
     }
 
     // model 确认
-    cpHandleOk= ()=> {
-        const {oldPwd, newPwd, reNewPwd } = this.state
+    cpHandleOk = () => {
+        const { oldPwd, newPwd, reNewPwd } = this.state
         console.log(oldPwd, newPwd, reNewPwd)
-        if(oldPwd==='') {
+        if (oldPwd === '') {
             message.error('请输入旧密码!')
             return false
         }
-        if(newPwd==='') {
+        if (newPwd === '') {
             message.error('请输入密码!')
             return false
         }
-        if(reNewPwd==='') {
+        if (reNewPwd === '') {
             message.error('请输入确认密码!')
             return false
         }
-        if(newPwd!==reNewPwd) {
+        if (newPwd !== reNewPwd) {
             message.error('两次输入的密码不一致，请重新输入!')
             return false
         }
         // TODO 掉接口
         axios
-            .post(`${API}/changPwd`, {oldPwd, newPwd, reNewPwd})
+            .post(`${APIPad}/changPwd`, { oldPwd, newPwd, reNewPwd })
             .then(res => {
                 if (res.data.code === 200) {
-                    this.setState({pwVisible: false})
+                    this.setState({ pwVisible: false })
                 } else {
                     message.error(res.data.msg)
                 }
             })
             .catch(err => {})
     }
-
 
     render() {
         const { userName, pwVisible, oldPwd, newPwd, reNewPwd, dataShow } = this.state
@@ -158,7 +157,7 @@ class DefaultLayout extends Component {
             <Layout className='app'>
                 <BackTop />
                 <AppAside menuToggle={menuToggle} menu={this.state.menu} />
-                <Layout style={{ marginLeft: menuToggle ? '80px' : '200px', minHeight: '100vh' }}>
+                <Layout style={{ marginLeft: menuToggle ? '54px' : '148px', minHeight: '100vh' }}>
                     <AppHeader
                         menuToggle={menuToggle}
                         menuClick={menuClick}
@@ -196,23 +195,39 @@ class DefaultLayout extends Component {
                 </Layout>
                 <Modal
                     wrapClassName='change-password-modal'
-                    title="修改密码"
+                    title='修改密码'
                     visible={pwVisible}
                     onOk={this.cpHandleOk}
-                    onCancel={()=> { this.setState({pwVisible: false})}}
-                    >
+                    onCancel={() => {
+                        this.setState({ pwVisible: false })
+                    }}>
                     <div>
-                        <div style={{marginBottom: '25px'}}>
-                            <label htmlFor="">旧密码：</label>
-                            <Input placeholder="请输入旧密码"  type='password' value={oldPwd} onChange={this.onOldPwChange}/>
+                        <div style={{ marginBottom: '25px' }}>
+                            <label htmlFor=''>旧密码：</label>
+                            <Input
+                                placeholder='请输入旧密码'
+                                type='password'
+                                value={oldPwd}
+                                onChange={this.onOldPwChange}
+                            />
                         </div>
-                        <div style={{marginBottom: '25px'}}>
-                            <label htmlFor="">新密码：</label>
-                            <Input placeholder="请输入密码"  type='password' value={newPwd} onChange={this.onNewPwChange}/>
+                        <div style={{ marginBottom: '25px' }}>
+                            <label htmlFor=''>新密码：</label>
+                            <Input
+                                placeholder='请输入密码'
+                                type='password'
+                                value={newPwd}
+                                onChange={this.onNewPwChange}
+                            />
                         </div>
                         <div>
-                            <label htmlFor="">确认新密码：</label>
-                            <Input placeholder="请输入密码"  type='password' value={reNewPwd} onChange={this.onNewSurePwChange}/>
+                            <label htmlFor=''>确认新密码：</label>
+                            <Input
+                                placeholder='请输入密码'
+                                type='password'
+                                value={reNewPwd}
+                                onChange={this.onNewSurePwChange}
+                            />
                         </div>
                     </div>
                 </Modal>
@@ -231,9 +246,4 @@ const dispatchToProp = dispatch => ({
     }
 })
 
-export default withRouter(
-    connect(
-        stateToProp,
-        dispatchToProp
-    )(DefaultLayout)
-)
+export default withRouter(connect(stateToProp, dispatchToProp)(DefaultLayout))

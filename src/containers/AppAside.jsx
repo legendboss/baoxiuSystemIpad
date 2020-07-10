@@ -8,10 +8,8 @@ const { Sider } = Layout
 const AppAside = props => {
     let { menuToggle, menu } = props
     return (
-        <Sider className='aside my-aside' collapsed={menuToggle}>
-            <div className='logo'>
-                logo公司名称
-            </div>
+        <Sider width={148} collapsedWidth={54} className='aside my-aside' collapsed={menuToggle}>
+            <div className='logo'>logo公司名称</div>
             <CustomMenu menu={menu}></CustomMenu>
         </Sider>
     )

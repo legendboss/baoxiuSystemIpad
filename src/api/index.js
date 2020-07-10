@@ -14,7 +14,7 @@ instance.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8
 instance.interceptors.request.use(
     config => {
         // 将 token 添加到请求头
-        token && (config.headers.Authorization = token)
+        token && (config.headers.token = token)
         return config
     },
     error => {
