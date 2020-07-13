@@ -9,7 +9,6 @@
         margin: 0 !important;
 
         label {
-            width: 50px;
             text-align: left;
             display: inline-block;
         }
@@ -20,6 +19,46 @@
         .add-repair {
             margin: 25px 0;
             width: 130px;
+        }
+        .list-left {
+            display: inline-flex;
+            .p-span {
+                font-family: PingFangSC-Regular;
+                font-size: 14px;
+                color: rgba(0, 0, 0, 0.65);
+                line-height: 22px;
+                text-align: left;
+                font-weight: 600;
+                margin-right: 10px;
+                width: 110px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                display: inline-block;
+            }
+        }
+        .text-p {
+            font-family: PingFangSC-Regular;
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.65);
+            line-height: 20px;
+            display: inline-flex;
+            text-align: left;
+            width: 320px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-left: 34px;
+        }
+
+        .ant-divider-horizontal {
+            margin: 20px 0;
+        }
+
+        .detail-btn {
+            border-color: #1973ff;
+            color: #1973ff;
+            border-radius: 4px;
         }
     }
 }
@@ -37,11 +76,6 @@
         vertical-align: super;
         line-height: 22px;
     }
-
-    .add-repair-sure {
-        margin-top: 25px;
-        float: right;
-    }
 }
 
 .repair-detail-modal {
@@ -49,9 +83,12 @@
         width: 600px !important;
     }
 
+    .scroll {
+        overflow-y: scroll;
+    }
+
     .rd-box {
         max-height: 497px;
-        overflow-y: scroll;
 
         .img-box {
             img {
@@ -60,6 +97,20 @@
                 object-fit: contain;
                 margin: 0 24px 24px 0;
             }
+        }
+
+        .history-btn {
+            border-color: #1973ff;
+            color: #1973ff;
+            border-radius: 4px;
+            font-size: 12px;
+            padding: 0 5px;
+            height: 20px;
+            margin-left: 5px;
+        }
+
+        .ant-divider-horizontal {
+            margin: 12px 0;
         }
     }
 
@@ -84,5 +135,18 @@
     .ant-rate {
         vertical-align: super;
         line-height: 22px;
+    }
+
+    .ant-modal-footer {
+        text-align: center;
+    }
+
+    .add-repair-sure {
+        margin-top: 25px;
+        float: right;
+    }
+
+    .ant-upload-picture-card-wrapper {
+        display: flex;
     }
 }
