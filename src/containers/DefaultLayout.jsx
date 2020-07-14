@@ -28,7 +28,8 @@ class DefaultLayout extends Component {
         pwVisible: false,
         oldPwd: '',
         newPwd: '',
-        reNewPwd: ''
+        reNewPwd: '',
+        unReadInfo: 0
     }
 
     componentDidMount() {
@@ -52,6 +53,7 @@ class DefaultLayout extends Component {
         } else {
             // 获取头部数据
             this.getTopData()
+            this.getUnReadCount()
             this.setState({
                 userName: JSON.parse(localStorage.getItem('userName')),
                 menu: this.getMenu(menu)
@@ -59,7 +61,21 @@ class DefaultLayout extends Component {
         }
     }
 
-    //
+    // 获取未读消息数量
+    getUnReadCount = () => {
+        axios
+            .get(`${APIPad}/unReadCount`, {})
+            .then(res => {
+                if (res.data.code === 200) {
+                    this.setState({
+                        unReadInfo: res.data.data
+                    })
+                } else {
+                    message.error(res.data.msg)
+                }
+            })
+            .catch(err => {})
+    }
 
     // 获取头部数据
     getTopData = () => {
@@ -78,11 +94,20 @@ class DefaultLayout extends Component {
     }
 
     // 退出登录
-    // loginOut = () => {
-    //     localStorage.clear()
-    //     this.props.history.push('/login')
-    //     message.success('登出成功!')
-    // }
+    loginOut = () => {
+        localStorage.removeItem('userName')
+        localStorage.removeItem('token')
+        this.props.history.push('/login')
+        message.success('登出成功!')
+    }
+
+    // 未读消息跳转消息列表
+    goToNewsList = () => {
+        this.props.history.push('/newsList')
+        this.setState({
+            unReadInfo: 0
+        })
+    }
 
     modifyPassword = () => {
         this.setState({
@@ -150,7 +175,7 @@ class DefaultLayout extends Component {
     }
 
     render() {
-        const { userName, pwVisible, oldPwd, newPwd, reNewPwd, dataShow } = this.state
+        const { userName, pwVisible, oldPwd, newPwd, reNewPwd, dataShow, unReadInfo } = this.state
         let { menuClick, menuToggle } = this.props
         let { auth } = JSON.parse(localStorage.getItem('user')) ? JSON.parse(localStorage.getItem('user')) : ''
         return (
@@ -166,6 +191,8 @@ class DefaultLayout extends Component {
                         show={this.state.show}
                         loginOut={this.loginOut}
                         modifyPassword={this.modifyPassword}
+                        unReadCount={unReadInfo}
+                        goToNewsList={this.goToNewsList}
                     />
                     <Content className='content'>
                         <AppDataShow dataShow={dataShow} />

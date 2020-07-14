@@ -47,6 +47,33 @@ class NewsList extends Component {
             })
     }
 
+    // 消息列表分页
+    handleTableChange = (page, pageSize) => {
+        this.setState(
+            {
+                startPage: page,
+                pageSize: pageSize
+            },
+            () => {
+                this.getNewsList()
+            }
+        )
+    }
+
+    // 读取消息
+    onReadMessage = id => {
+        axios
+            .post(`${APIPad}/readMessage`, { id })
+            .then(res => {
+                if (res.data.code === 200) {
+                    this.getNewsList()
+                } else {
+                    message.error(res.data.msg)
+                }
+            })
+            .catch(err => {})
+    }
+
     render() {
         const { listLoading, listData, total, startPage } = this.state
         return (
@@ -59,7 +86,10 @@ class NewsList extends Component {
                                     return (
                                         <div key={index}>
                                             {item.isRead === 1 ? ( // 未读
-                                                <div>
+                                                <div
+                                                    onClick={() => {
+                                                        this.onReadMessage(item.id)
+                                                    }}>
                                                     <Badge status='error' text={item.addTimeStr} />
                                                     <p className='text-p'>{item.content}</p>
                                                     <Divider />

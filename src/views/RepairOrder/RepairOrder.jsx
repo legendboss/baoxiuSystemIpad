@@ -49,7 +49,8 @@ export default class RepairOrder extends Component {
             confirmLoading: false,
             repairHistoryVisible: false,
             historyList: [], // 报修历史数据
-            ingRepairDetailVisible: false
+            ingRepairDetailVisible: false,
+            endRepairDetailVisible: false
         }
     }
 
@@ -122,6 +123,8 @@ export default class RepairOrder extends Component {
             this.setState({ newRepairDetailVisible: true })
         } else if (orderStatus === '1') {
             this.setState({ ingRepairDetailVisible: true })
+        } else if (orderStatus === '2') {
+            this.setState({ endRepairDetailVisible: true })
         }
         const model = { id }
         axios
@@ -242,7 +245,7 @@ export default class RepairOrder extends Component {
         this.setState({ repairSureLoading: true })
         const model = {
             applicationPhoto: photo,
-            reFixId: e.engineerName ? e.engineerName[0].key : '', // 工程师
+            reFixId: e.engineerName ? (e.engineerName[0].key !== '0' ? e.engineerName[0].key : '') : '', // 工程师
             reFixName: e.engineerName ? e.engineerName[0].label : '',
             orderId: orderDetailInfo.id
         }
@@ -290,7 +293,8 @@ export default class RepairOrder extends Component {
             confirmLoading,
             repairHistoryVisible,
             historyList,
-            ingRepairDetailVisible
+            ingRepairDetailVisible,
+            endRepairDetailVisible
         } = this.state
 
         const uploadButton = (
@@ -479,7 +483,7 @@ export default class RepairOrder extends Component {
                     footer={null}>
                     <div>
                         <Form ref={this.formRef} onFinish={this.arHandleOk}>
-                            <div className='rd-box scroll'>
+                            <div className='rd-box'>
                                 <Row span={24}>
                                     <Col span={12}>
                                         <span>报修人：</span>
@@ -629,10 +633,7 @@ export default class RepairOrder extends Component {
                                 <Row>
                                     <Divider />
                                     <Col span={18}>
-                                        <Form.Item
-                                            label='转交工程师：'
-                                            name='engineerName'
-                                            rules={[{ required: true, message: '请输入工程师!' }]}>
+                                        <Form.Item label='转交工程师：' name='engineerName'>
                                             <Select
                                                 mode='multiple'
                                                 placeholder=''
@@ -661,6 +662,161 @@ export default class RepairOrder extends Component {
                                 </Button>
                             </Form.Item>
                         </Form>
+                    </div>
+                </Modal>
+                {/* 已完成详情 */}
+                <Modal
+                    wrapClassName='repair-detail-modal'
+                    title='详情'
+                    visible={endRepairDetailVisible}
+                    onCancel={() => {
+                        this.setState({ endRepairDetailVisible: false })
+                    }}
+                    footer={null}>
+                    <div className='rd-box'>
+                        <Row span={24}>
+                            <Col span={12}>
+                                <span>报修人：</span>
+                                <span>{contractVo.contractName}</span>
+                            </Col>
+                            <Col span={12}>
+                                <span>联系电话：</span>
+                                <span>{contractVo.contractPhone}</span>
+                            </Col>
+                        </Row>
+                        <Row span={24}>
+                            <Col span={12}>
+                                <span>报修内容：</span>
+                                <span>{contractVo.content}</span>
+                            </Col>
+                            <Col span={12}>
+                                <span>维修地址：</span>
+                                <span>{contractVo.address}</span>
+                            </Col>
+                        </Row>
+                        <Row span={24}>
+                            <Col span={12}>
+                                <span>系统类型：</span>
+                                <span>
+                                    {contractVo.fixType === 0
+                                        ? '系统'
+                                        : contractVo.fixType === 1
+                                        ? '硬件'
+                                        : contractVo.fixType === 2
+                                        ? '软件'
+                                        : contractVo.fixType === 3
+                                        ? '其他'
+                                        : ''}
+                                </span>
+                            </Col>
+                            <Col span={12}>
+                                <span>类型：</span>
+                                <span>{contractVo.typeStr}</span>
+                            </Col>
+                        </Row>
+                        {contractVo.fixType === 2 && (
+                            <Row span={24}>
+                                <Col span={12}>
+                                    <span>软件名称：</span>
+                                    <span>{contractVo.softName}</span>
+                                </Col>
+                            </Row>
+                        )}
+                        {/* <Row span={24}>
+                            <Col span={12}>
+                                <span>用户评价：</span>
+                                <Rate />
+                            </Col>
+                        </Row> */}
+                        <Row span={24}>
+                            <span>附件：</span>
+                            <div className='img-box'>
+                                {contractVo.photo.length > 0 ? (
+                                    <div>
+                                        {contractVo.photo.map((item, index) => {
+                                            return <img key={index} src={item} alt='' />
+                                        })}
+                                    </div>
+                                ) : (
+                                    <span>无</span>
+                                )}
+                            </div>
+                        </Row>
+                        {fixVo !== null && (
+                            <div>
+                                <Divider />
+                                <Row span={24}>
+                                    <Col span={12}>
+                                        <span>工程师：</span>
+                                        <span>{fixVo.fixName}</span>
+                                    </Col>
+                                    <Col span={12}>
+                                        <span>订单状态：</span>
+                                        <span>
+                                            {orderDetailInfo.orderStatus === 1
+                                                ? '已接单'
+                                                : orderDetailInfo.orderStatus === 0
+                                                ? '未接单'
+                                                : orderDetailInfo.orderStatus === 2
+                                                ? '已完成'
+                                                : orderDetailInfo.orderStatus === 3
+                                                ? '已取消'
+                                                : ''}
+                                        </span>
+                                    </Col>
+                                </Row>
+                                <Row span={24}>
+                                    <span>附件：</span>
+                                    <div className='img-box'>
+                                        {fixVo.photos.length > 0 ? (
+                                            <div>
+                                                {fixVo.photos.map((item, index) => {
+                                                    return <img key={index} src={item} alt='' />
+                                                })}
+                                            </div>
+                                        ) : (
+                                            <span>无</span>
+                                        )}
+                                    </div>
+                                </Row>
+                            </div>
+                        )}
+                        {userDevice !== null && (
+                            <div>
+                                <Divider />
+                                <p>设备详情:</p>
+                                <Row span={24}>
+                                    <Col span={12}>
+                                        <span>CPU：</span>
+                                        <span>{userDevice.cpu}</span>
+                                    </Col>
+                                    <Col span={12}>
+                                        <span>硬盘：</span>
+                                        <span>{userDevice.system}</span>
+                                    </Col>
+                                </Row>
+                                <Row span={24}>
+                                    <Col span={12}>
+                                        <span>打印机：</span>
+                                        <span>{userDevice.printer}</span>
+                                    </Col>
+                                    <Col span={12}>
+                                        <span>内存：</span>
+                                        <span>{userDevice.hardDisk}</span>
+                                    </Col>
+                                </Row>
+                                <Row span={24}>
+                                    <Col span={12}>
+                                        <span>显卡：</span>
+                                        <span>{userDevice.videoCard}</span>
+                                    </Col>
+                                    <Col span={12}>
+                                        <span>主板：</span>
+                                        <span>{userDevice.mainBoard}</span>
+                                    </Col>
+                                </Row>
+                            </div>
+                        )}
                     </div>
                 </Modal>
             </Layout>
