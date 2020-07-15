@@ -326,6 +326,7 @@ export default class RepairOrder extends Component {
                                             </p>
                                             <p className='text-p'>{item.content}</p>
                                             <Button
+                                                size='small'
                                                 className='detail-btn'
                                                 onClick={() => {
                                                     this.onOrderDetail(item.id)
@@ -337,6 +338,7 @@ export default class RepairOrder extends Component {
                                     )
                                 })}
                                 <Pagination
+                                    size='small'
                                     style={{ textAlign: 'end' }}
                                     showQuickJumper
                                     current={startPage}
@@ -346,7 +348,7 @@ export default class RepairOrder extends Component {
                                 />
                             </div>
                         ) : (
-                            <div style={{ margin: '60px auto' }}>
+                            <div style={{ margin: '5rem auto' }}>
                                 <Empty />
                             </div>
                         )}
@@ -480,14 +482,20 @@ export default class RepairOrder extends Component {
                     title='详情'
                     visible={ingRepairDetailVisible}
                     onCancel={this.onCloseResetModel}
+                    centered
                     footer={null}>
                     <div>
                         <Form ref={this.formRef} onFinish={this.arHandleOk}>
-                            <div className='rd-box'>
+                            <div className='rd-box scroll'>
                                 <Row span={24}>
                                     <Col span={12}>
                                         <span>报修人：</span>
-                                        <span>{contractVo.contractName}</span>
+                                        <span>
+                                            {contractVo.contractName}
+                                            <Button size='small' className='history-btn' onClick={this.onRepairHistory}>
+                                                报修历史
+                                            </Button>
+                                        </span>
                                     </Col>
                                     <Col span={12}>
                                         <span>联系电话：</span>
@@ -672,8 +680,9 @@ export default class RepairOrder extends Component {
                     onCancel={() => {
                         this.setState({ endRepairDetailVisible: false })
                     }}
+                    centered
                     footer={null}>
-                    <div className='rd-box'>
+                    <div className='rd-box scroll'>
                         <Row span={24}>
                             <Col span={12}>
                                 <span>报修人：</span>

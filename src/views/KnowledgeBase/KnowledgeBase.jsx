@@ -71,7 +71,7 @@ export default class KnowledgeBase extends Component {
                             className='search-input'
                             placeholder='请输入'
                             enterButton='搜索'
-                            size='large'
+                            size='default'
                             onSearch={value => {
                                 this.getKnowledgeList(value)
                             }}
@@ -89,6 +89,7 @@ export default class KnowledgeBase extends Component {
                                     )
                                 })}
                                 <Pagination
+                                    size='small'
                                     style={{ textAlign: 'end' }}
                                     showQuickJumper
                                     current={startPage}

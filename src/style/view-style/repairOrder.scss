@@ -4,6 +4,7 @@
     }
 
     .repairOrder-box {
+        min-height: 33rem;
         padding: 25px 35px;
         background-color: #fff;
         margin: 0 !important;
@@ -30,7 +31,7 @@
                 text-align: left;
                 font-weight: 600;
                 margin-right: 10px;
-                width: 110px;
+                width: 10rem;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
@@ -44,7 +45,7 @@
             line-height: 20px;
             display: inline-flex;
             text-align: left;
-            width: 320px;
+            width: 30rem;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -52,13 +53,14 @@
         }
 
         .ant-divider-horizontal {
-            margin: 20px 0;
+            margin: 1rem 0;
         }
 
         .detail-btn {
             border-color: #1973ff;
             color: #1973ff;
             border-radius: 4px;
+            float: right;
         }
     }
 }
@@ -84,12 +86,11 @@
     }
 
     .scroll {
+        max-height: 300px;
         overflow-y: scroll;
     }
 
     .rd-box {
-        // max-height: 497px;
-
         .img-box {
             img {
                 width: 100px;
@@ -110,12 +111,12 @@
         }
 
         .ant-divider-horizontal {
-            margin: 12px 0;
+            margin: 1.2rem 0;
         }
     }
 
     .ant-col {
-        margin-bottom: 15px;
+        margin-bottom: 1rem;
         color: rgba(0, 0, 0, 0.85);
     }
 
@@ -124,7 +125,7 @@
     }
 
     .ant-col-12 span:nth-of-type(2) {
-        width: 200px;
+        width: 20rem;
         display: inline-block;
     }
 

@@ -63,7 +63,7 @@ class NewsList extends Component {
     // 读取消息
     onReadMessage = id => {
         axios
-            .post(`${APIPad}/readMessage`, { id })
+            .get(`${APIPad}/readMessage?id=${id}`)
             .then(res => {
                 if (res.data.code === 200) {
                     this.getNewsList()
@@ -105,6 +105,7 @@ class NewsList extends Component {
                                     )
                                 })}
                                 <Pagination
+                                    size='small'
                                     style={{ textAlign: 'end' }}
                                     showQuickJumper
                                     current={startPage}
