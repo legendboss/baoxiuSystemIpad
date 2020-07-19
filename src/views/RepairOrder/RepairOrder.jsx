@@ -13,7 +13,8 @@ import {
     Divider,
     Radio,
     Pagination,
-    Empty
+    Empty,
+    Input
 } from 'antd'
 import '@/style/view-style/repairOrder.scss'
 import { PlusOutlined } from '@ant-design/icons'
@@ -22,6 +23,15 @@ import axios from '@/api'
 import { APIPad, API } from '@/api/config'
 
 const { Option } = Select
+
+function getBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = error => reject(error)
+    })
+}
 
 export default class RepairOrder extends Component {
     constructor(props) {
@@ -50,7 +60,9 @@ export default class RepairOrder extends Component {
             repairHistoryVisible: false,
             historyList: [], // 报修历史数据
             ingRepairDetailVisible: false,
-            endRepairDetailVisible: false
+            endRepairDetailVisible: false,
+            previewVisible: false,
+            previewImage: ''
         }
     }
 
@@ -117,7 +129,7 @@ export default class RepairOrder extends Component {
     }
 
     // 详情
-    onOrderDetail = id => {
+    onOrderDetail = item => {
         const { orderStatus } = this.state
         if (orderStatus === '0') {
             this.setState({ newRepairDetailVisible: true })
@@ -126,7 +138,8 @@ export default class RepairOrder extends Component {
         } else if (orderStatus === '2') {
             this.setState({ endRepairDetailVisible: true })
         }
-        const model = { id }
+        this.setState({ contractId: item.contractId })
+        const model = { id: item.id }
         axios
             .get(`${APIPad}/orderInfo`, { params: model })
             .then(res => {
@@ -137,6 +150,12 @@ export default class RepairOrder extends Component {
                         fixVo: res.data.data.fixVo,
                         userDevice: res.data.data.contractVo.userDevice
                     })
+                    if (orderStatus === '1') {
+                        // 回显数据
+                        this.formRef.current.setFieldsValue({
+                            ...res.data.data.contractVo.userDevice
+                        })
+                    }
                 } else {
                     message.error(res.data.msg)
                 }
@@ -169,8 +188,9 @@ export default class RepairOrder extends Component {
 
     // 报修历史打开
     onRepairHistory = () => {
-        const { orderDetailInfo } = this.state
-        const model = { userId: orderDetailInfo.id }
+        const { contractId } = this.state
+        console.log(contractId)
+        const model = { userId: contractId }
         axios
             .get(`${API}/orderHistory`, { params: model })
             .then(res => {
@@ -230,9 +250,17 @@ export default class RepairOrder extends Component {
 
     // model 完成
     arHandleOk = e => {
-        const { fileList, orderDetailInfo } = this.state
+        const { fileList, orderDetailInfo, userDevice } = this.state
         console.log(e)
         console.log(fileList)
+        if (fileList.length <= 0) {
+            message.error('请上传图片附件！')
+            return false
+        }
+        if (e.fixContent === undefined) {
+            message.error('请填写维修方案！')
+            return false
+        }
         const photo = []
         for (let i = 0; i < fileList.length; i++) {
             if (fileList[i].status !== 'done') {
@@ -243,11 +271,16 @@ export default class RepairOrder extends Component {
             }
         }
         this.setState({ repairSureLoading: true })
+        for (const key in userDevice) {
+            userDevice[key] = e[key]
+        }
         const model = {
             applicationPhoto: photo,
             reFixId: e.engineerName ? (e.engineerName[0].key !== '0' ? e.engineerName[0].key : '') : '', // 工程师
             reFixName: e.engineerName ? e.engineerName[0].label : '',
-            orderId: orderDetailInfo.id
+            orderId: orderDetailInfo.id,
+            userDevice,
+            fixContent: e.fixContent
         }
         axios
             .post(`${APIPad}/finishOrder`, model)
@@ -274,6 +307,27 @@ export default class RepairOrder extends Component {
         this.formRef.current.resetFields()
     }
 
+    // 图片预览
+    handlePreview = async file => {
+        console.log(file)
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj)
+        }
+
+        this.setState({
+            previewImage: file.url || file.preview,
+            previewVisible: true
+        })
+    }
+
+    // 普通图片预览
+    onPreviewImage = url => {
+        this.setState({
+            previewImage: url,
+            previewVisible: true
+        })
+    }
+
     render() {
         const {
             startPage,
@@ -294,7 +348,9 @@ export default class RepairOrder extends Component {
             repairHistoryVisible,
             historyList,
             ingRepairDetailVisible,
-            endRepairDetailVisible
+            endRepairDetailVisible,
+            previewVisible,
+            previewImage
         } = this.state
 
         const uploadButton = (
@@ -329,7 +385,7 @@ export default class RepairOrder extends Component {
                                                 size='small'
                                                 className='detail-btn'
                                                 onClick={() => {
-                                                    this.onOrderDetail(item.id)
+                                                    this.onOrderDetail(item)
                                                 }}>
                                                 详情
                                             </Button>
@@ -365,6 +421,8 @@ export default class RepairOrder extends Component {
                     }}
                     cancelText='关闭'
                     okText='接单'
+                    zIndex={1}
+                    centered
                     onOk={this.handleNewOrderOk}
                     confirmLoading={confirmLoading}>
                     <div className='rd-box'>
@@ -427,7 +485,16 @@ export default class RepairOrder extends Component {
                                 {contractVo.photo.length > 0 ? (
                                     <div>
                                         {contractVo.photo.map((item, index) => {
-                                            return <img key={index} src={item} alt='' />
+                                            return (
+                                                <img
+                                                    key={index}
+                                                    src={item}
+                                                    alt=''
+                                                    onClick={() => {
+                                                        this.onPreviewImage(item)
+                                                    }}
+                                                />
+                                            )
                                         })}
                                     </div>
                                 ) : (
@@ -443,11 +510,13 @@ export default class RepairOrder extends Component {
                     wrapClassName='repair-history-modal'
                     title='报修历史'
                     visible={repairHistoryVisible}
+                    zIndex={2}
+                    centered
                     onCancel={() => {
                         this.setState({ repairHistoryVisible: false })
                     }}
                     footer={null}>
-                    <div className='rh-box'>
+                    <div className='rh-box scroll'>
                         {historyList.length > 0 ? (
                             historyList.map((item, index) => {
                                 return (
@@ -459,7 +528,16 @@ export default class RepairOrder extends Component {
                                             {item.applicationPhoto.length > 0 ? (
                                                 <div>
                                                     {item.applicationPhoto.map((item2, index2) => {
-                                                        return <img key={index2} src={item2} alt='' />
+                                                        return (
+                                                            <img
+                                                                key={index2}
+                                                                src={item2}
+                                                                alt=''
+                                                                onClick={() => {
+                                                                    this.onPreviewImage(item2)
+                                                                }}
+                                                            />
+                                                        )
                                                     })}
                                                 </div>
                                             ) : (
@@ -483,6 +561,7 @@ export default class RepairOrder extends Component {
                     visible={ingRepairDetailVisible}
                     onCancel={this.onCloseResetModel}
                     centered
+                    zIndex={1}
                     footer={null}>
                     <div>
                         <Form ref={this.formRef} onFinish={this.arHandleOk}>
@@ -540,19 +619,22 @@ export default class RepairOrder extends Component {
                                         </Col>
                                     </Row>
                                 )}
-                                {/* <Row span={24}>
-                                    <Col span={12}>
-                                        <span>用户评价：</span>
-                                        <Rate />
-                                    </Col>
-                                </Row> */}
                                 <Row span={24}>
                                     <span>附件：</span>
                                     <div className='img-box'>
                                         {contractVo.photo.length > 0 ? (
                                             <div>
                                                 {contractVo.photo.map((item, index) => {
-                                                    return <img key={index} src={item} alt='' />
+                                                    return (
+                                                        <img
+                                                            key={index}
+                                                            src={item}
+                                                            alt=''
+                                                            onClick={() => {
+                                                                this.onPreviewImage(item)
+                                                            }}
+                                                        />
+                                                    )
                                                 })}
                                             </div>
                                         ) : (
@@ -592,9 +674,7 @@ export default class RepairOrder extends Component {
                                                     method='post'
                                                     listType='picture-card'
                                                     fileList={fileList}
-                                                    onPreview={() => {
-                                                        console.log('不做预览！')
-                                                    }}
+                                                    onPreview={this.handlePreview}
                                                     onChange={this.handleUpChange}>
                                                     {fileList.length >= 4 ? null : uploadButton}
                                                 </Upload>
@@ -606,38 +686,57 @@ export default class RepairOrder extends Component {
                                     <div>
                                         <Divider />
                                         <p>设备详情:</p>
-                                        <Row span={24}>
-                                            <Col span={12}>
-                                                <span>CPU：</span>
-                                                <span>{userDevice.cpu}</span>
+                                        <Row span={22}>
+                                            <Col span={11}>
+                                                <Form.Item label='CPU：' name='cpu'>
+                                                    <Input placeholder='请输入' autoComplete='off' />
+                                                </Form.Item>
                                             </Col>
-                                            <Col span={12}>
-                                                <span>硬盘：</span>
-                                                <span>{userDevice.system}</span>
-                                            </Col>
-                                        </Row>
-                                        <Row span={24}>
-                                            <Col span={12}>
-                                                <span>打印机：</span>
-                                                <span>{userDevice.printer}</span>
-                                            </Col>
-                                            <Col span={12}>
-                                                <span>内存：</span>
-                                                <span>{userDevice.hardDisk}</span>
+                                            <Col span={11}>
+                                                <Form.Item label='硬盘：' name='system'>
+                                                    <Input placeholder='请输入' autoComplete='off' />
+                                                </Form.Item>
                                             </Col>
                                         </Row>
-                                        <Row span={24}>
-                                            <Col span={12}>
-                                                <span>显卡：</span>
-                                                <span>{userDevice.videoCard}</span>
+                                        <Row span={22}>
+                                            <Col span={11}>
+                                                <Form.Item label='打印机：' name='printer'>
+                                                    <Input placeholder='请输入' autoComplete='off' />
+                                                </Form.Item>
                                             </Col>
-                                            <Col span={12}>
-                                                <span>主板：</span>
-                                                <span>{userDevice.mainBoard}</span>
+                                            <Col span={11}>
+                                                <Form.Item label='内存：' name='hardDisk'>
+                                                    <Input placeholder='请输入' autoComplete='off' />
+                                                </Form.Item>
+                                            </Col>
+                                        </Row>
+                                        <Row span={22}>
+                                            <Col span={11}>
+                                                <Form.Item label='显卡：' name='videoCard'>
+                                                    <Input placeholder='请输入' autoComplete='off' />
+                                                </Form.Item>
+                                            </Col>
+                                            <Col span={11}>
+                                                <Form.Item label='主板：' name='mainBoard'>
+                                                    <Input placeholder='请输入' autoComplete='off' />
+                                                </Form.Item>
+                                            </Col>
+                                            <Col span={11} style={{ display: 'none' }}>
+                                                <Form.Item label='主板：' name='uid'>
+                                                    <Input placeholder='请输入' autoComplete='off' />
+                                                </Form.Item>
                                             </Col>
                                         </Row>
                                     </div>
                                 )}
+                                <Row>
+                                    <Divider />
+                                    <Col span={18} style={{ marginBottom: '0' }}>
+                                        <Form.Item label='维修方案：' name='fixContent'>
+                                            <Input.TextArea />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
                                 <Row>
                                     <Divider />
                                     <Col span={18}>
@@ -677,6 +776,7 @@ export default class RepairOrder extends Component {
                     wrapClassName='repair-detail-modal'
                     title='详情'
                     visible={endRepairDetailVisible}
+                    zIndex={1}
                     onCancel={() => {
                         this.setState({ endRepairDetailVisible: false })
                     }}
@@ -743,7 +843,16 @@ export default class RepairOrder extends Component {
                                 {contractVo.photo.length > 0 ? (
                                     <div>
                                         {contractVo.photo.map((item, index) => {
-                                            return <img key={index} src={item} alt='' />
+                                            return (
+                                                <img
+                                                    key={index}
+                                                    src={item}
+                                                    alt=''
+                                                    onClick={() => {
+                                                        this.onPreviewImage(item)
+                                                    }}
+                                                />
+                                            )
                                         })}
                                     </div>
                                 ) : (
@@ -780,7 +889,16 @@ export default class RepairOrder extends Component {
                                         {fixVo.photos.length > 0 ? (
                                             <div>
                                                 {fixVo.photos.map((item, index) => {
-                                                    return <img key={index} src={item} alt='' />
+                                                    return (
+                                                        <img
+                                                            key={index}
+                                                            src={item}
+                                                            alt=''
+                                                            onClick={() => {
+                                                                this.onPreviewImage(item)
+                                                            }}
+                                                        />
+                                                    )
                                                 })}
                                             </div>
                                         ) : (
@@ -827,6 +945,21 @@ export default class RepairOrder extends Component {
                             </div>
                         )}
                     </div>
+                </Modal>
+
+                {/* 普通图片预览 */}
+                <Modal
+                    width={400}
+                    visible={previewVisible}
+                    title='预览'
+                    footer={null}
+                    centered
+                    zIndex={3}
+                    className='preview-image-modal'
+                    onCancel={() => {
+                        this.setState({ previewVisible: false })
+                    }}>
+                    <img alt='example' className='preview-image' src={previewImage} />
                 </Modal>
             </Layout>
         )

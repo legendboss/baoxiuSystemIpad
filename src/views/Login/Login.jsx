@@ -23,6 +23,7 @@ class Login extends Component {
                 if (res.data.code === 200) {
                     localStorage.setItem('userName', JSON.stringify(res.data.data.userName))
                     localStorage.setItem('token', res.data.data.token)
+                    localStorage.setItem('uid', res.data.data.uid)
                     this.props.history.push('/')
                     message.success('登录成功!')
                 } else {

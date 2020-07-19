@@ -16,7 +16,8 @@ import AppFooter from './AppFooter.jsx'
 import AppDataShow from './AppDataShow.jsx'
 
 const { Content } = Layout
-const ws = new WebSocket('ws://qikeqike.qicp.vip/count')
+const uid = localStorage.getItem('uid')
+const wsNewMessage = new WebSocket(`ws://qikeqike.qicp.vip/newMessage/${uid}`)
 
 class DefaultLayout extends Component {
     state = {
@@ -34,15 +35,20 @@ class DefaultLayout extends Component {
 
     componentDidMount() {
         this.isLogin()
-        ws.onopen = function(e) {
-            console.log('连接上 ws 服务端了')
-            ws.send({})
+        // -------------------------------
+        wsNewMessage.onopen = function(e) {
+            console.log('连接上 wsNewMessage 服务端了')
+            wsNewMessage.send({})
         }
-        ws.onmessage = msg => {
-            console.log('接收服务端发过来的消息: ', msg)
+        wsNewMessage.onmessage = msg => {
+            console.log('接收服务端发过来的消息wsNewMessage: ', msg)
+            document.getElementById('bgm').play()
+            this.setState({
+                unReadInfo: Number(msg.data)
+            })
         }
-        ws.onclose = function(e) {
-            console.log('ws 连接关闭了')
+        wsNewMessage.onclose = function(e) {
+            console.log('wsNewMessage 连接关闭了')
             console.log(e)
         }
     }
@@ -180,6 +186,9 @@ class DefaultLayout extends Component {
         let { auth } = JSON.parse(localStorage.getItem('user')) ? JSON.parse(localStorage.getItem('user')) : ''
         return (
             <Layout className='app'>
+                <audio id='bgm'>
+                    <source src='http://downsc.chinaz.net/Files/DownLoad/sound1/201706/8855.mp3' type='audio/mpeg' />
+                </audio>
                 <BackTop />
                 <AppAside menuToggle={menuToggle} menu={this.state.menu} />
                 <Layout style={{ marginLeft: menuToggle ? '54px' : '148px', minHeight: '100vh' }}>

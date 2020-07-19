@@ -154,3 +154,77 @@
         display: flex;
     }
 }
+
+.repair-history-modal {
+    .ant-modal {
+        width: 600px !important;
+    }
+
+    .rh-box {
+        max-height: 300px;
+        overflow-y: scroll;
+
+        .img-box {
+            img {
+                width: 100px;
+                height: 100px;
+                object-fit: contain;
+                margin: 0 24px 24px 0;
+            }
+        }
+    }
+}
+
+.ant-upload.ant-upload-select-picture-card {
+    width: 6.5rem;
+    height: 6.5rem;
+}
+
+.ant-upload-list {
+    float: left;
+}
+
+.ant-upload-list-picture-card-container {
+    width: 6.5rem;
+    height: 6.5rem;
+}
+.ant-upload-list-picture-card .ant-upload-list-item {
+    width: 6.5rem;
+    height: 6.5rem;
+}
+
+.ant-upload-list-picture-card .ant-upload-list-item-info {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.ant-upload-list-picture-card .ant-upload-list-item-actions {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.7);
+    width: 84%;
+    height: 84%;
+}
+
+.ant-upload-list-item-card-actions-btn {
+    opacity: 1;
+}
+.ant-upload-list-picture-card .ant-upload-list-item-actions .anticon-eye,
+.ant-upload-list-picture-card .ant-upload-list-item-actions .anticon-delete {
+    color: #fff;
+    font-size: 16px;
+    margin: 18px 5px;
+}
+
+.ant-upload-list-picture-card .ant-upload-list-item-uploading .ant-upload-list-item-info {
+    height: 100%;
+}
+
+.preview-image-modal {
+    width: 400px;
+
+    .preview-image {
+        width: 350px;
+        max-height: 350px;
+        display: block;
+        margin: 0 auto;
+    }
+}
