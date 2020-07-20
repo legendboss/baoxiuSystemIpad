@@ -114,8 +114,10 @@
             color: #fff;
             margin: 0px !important;
 
-            .ant-col-6 {
+            .ant-col-4 {
                 padding: 0 !important;
+                max-width: 20%;
+                flex: 0 0 20%;
             }
 
             .base-style {
