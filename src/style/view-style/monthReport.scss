@@ -1,0 +1,17 @@
+.monthReport {
+    p {
+        margin: 0;
+    }
+
+    .newsList-box {
+        min-height: 33rem;
+        padding: 40px 30px;
+        background-color: #fff;
+        margin: 0 !important;
+
+        .save-form-button {
+            margin: 0 auto;
+            display: block;
+        }
+    }
+}

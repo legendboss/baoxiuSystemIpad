@@ -7,7 +7,9 @@ import { APIPad } from '@/api/config'
 import aside1 from '@/assets/icon/aside1.svg'
 import aside4 from '@/assets/icon/aside4.svg'
 import aside7 from '@/assets/icon/aside7.svg'
+import aside8 from '@/assets/icon/aside8.svg'
 const wsNewOrder = new WebSocket(`ws://qikeqike.qicp.vip/newOrder`)
+// const wsNewOrder = new WebSocket(`ws://172.16.2.218:8092/newOrder`)
 
 class Index extends Component {
     state = {
@@ -81,6 +83,14 @@ class Index extends Component {
                                 <img src={aside7} alt='' />
                             </a>
                             <p>消息列表</p>
+                        </div>
+                    </Col>
+                    <Col>
+                        <div className='items'>
+                            <a href='#/monthReport'>
+                                <img src={aside8} alt='' />
+                            </a>
+                            <p>月报</p>
                         </div>
                     </Col>
                 </Row>

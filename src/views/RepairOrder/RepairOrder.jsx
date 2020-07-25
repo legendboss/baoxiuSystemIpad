@@ -45,9 +45,7 @@ export default class RepairOrder extends Component {
             listData: [],
             total: 0,
             listLoading: false,
-            engineerValue: [],
             engineerList: [],
-            engineerFetching: false,
             fileList: [],
             showEngineer: false,
             repairSureLoading: false,
@@ -62,7 +60,9 @@ export default class RepairOrder extends Component {
             ingRepairDetailVisible: false,
             endRepairDetailVisible: false,
             previewVisible: false,
-            previewImage: ''
+            previewImage: '',
+            planSearchVisible: false,
+            planList: [] // 方案查询数据
         }
     }
 
@@ -71,6 +71,7 @@ export default class RepairOrder extends Component {
     componentDidMount() {
         // 获取列表
         this.getRepairOrderList()
+        this.fetchEngineer()
     }
 
     // 订单状态
@@ -213,10 +214,8 @@ export default class RepairOrder extends Component {
     handleUpChange = ({ fileList }) => this.setState({ fileList })
 
     // 工程师select
-    fetchEngineer = value => {
-        this.setState({ engineerList: [], engineerFetching: true })
+    fetchEngineer = () => {
         const model = {
-            name: value,
             role: 1
         }
         axios
@@ -224,15 +223,7 @@ export default class RepairOrder extends Component {
             .then(res => {
                 const Data = res.data.data
                 if (res.data.code === 200) {
-                    if (Data.length > 0) {
-                        this.setState({ engineerList: Data, engineerFetching: false })
-                    } else {
-                        this.setState({
-                            engineerValue: value,
-                            engineerList: [{ id: 0, name: value }],
-                            engineerFetching: false
-                        })
-                    }
+                    this.setState({ engineerList: Data })
                 } else {
                     message.error(res.data.msg)
                 }
@@ -240,24 +231,17 @@ export default class RepairOrder extends Component {
             .catch(err => {})
     }
 
-    engineerChange = value => {
-        this.setState({
-            engineerValue: value,
-            engineerList: [],
-            engineerFetching: false
-        })
-    }
-
     // model 完成
     arHandleOk = e => {
         const { fileList, orderDetailInfo, userDevice } = this.state
         console.log(e)
         console.log(fileList)
-        if (fileList.length <= 0) {
-            message.error('请上传图片附件！')
-            return false
-        }
-        if (e.fixContent === undefined) {
+        // if (fileList.length <= 0) {
+        //     message.error('请上传图片附件！')
+        //     return false
+        // }
+        console.log(e.engineerName)
+        if (e.engineerName === undefined && e.fixContent === undefined) {
             message.error('请填写维修方案！')
             return false
         }
@@ -276,8 +260,8 @@ export default class RepairOrder extends Component {
         }
         const model = {
             applicationPhoto: photo,
-            reFixId: e.engineerName ? (e.engineerName[0].key !== '0' ? e.engineerName[0].key : '') : '', // 工程师
-            reFixName: e.engineerName ? e.engineerName[0].label : '',
+            reFixId: e.engineerName ? e.engineerName.key[0] : '', // 工程师
+            reFixName: e.engineerName ? e.engineerName.key[1] : '',
             orderId: orderDetailInfo.id,
             userDevice,
             fixContent: e.fixContent
@@ -328,15 +312,52 @@ export default class RepairOrder extends Component {
         })
     }
 
+    // 方案查询打开
+    onPlanSearch = () => {
+        const { contractVo } = this.state
+        let keyWord = ''
+        if (contractVo.softName !== '') {
+            keyWord = contractVo.softName
+        } else {
+            switch (contractVo.fixType) {
+                case 0:
+                    keyWord = '系统'
+                    break
+                case 1:
+                    keyWord = '硬件'
+                    break
+                case 3:
+                    keyWord = '其他'
+                    break
+                default:
+                    break
+            }
+        }
+        const model = { keyWord: keyWord }
+        axios
+            .get(`${APIPad}/searchFix`, { params: model })
+            .then(res => {
+                if (res.data.code === 200) {
+                    this.setState({
+                        planList: res.data.data
+                    })
+                } else {
+                    message.error(res.data.msg)
+                }
+            })
+            .catch(err => {})
+        this.setState({
+            planSearchVisible: true
+        })
+    }
+
     render() {
         const {
             startPage,
             listData,
             total,
             listLoading,
-            engineerValue,
             engineerList,
-            engineerFetching,
             fileList,
             repairSureLoading,
             newRepairDetailVisible,
@@ -350,7 +371,9 @@ export default class RepairOrder extends Component {
             ingRepairDetailVisible,
             endRepairDetailVisible,
             previewVisible,
-            previewImage
+            previewImage,
+            planSearchVisible,
+            planList
         } = this.state
 
         const uploadButton = (
@@ -611,14 +634,20 @@ export default class RepairOrder extends Component {
                                         <span>{contractVo.typeStr}</span>
                                     </Col>
                                 </Row>
-                                {contractVo.fixType === 2 && (
-                                    <Row span={24}>
+                                <Row span={24}>
+                                    {contractVo.fixType === 2 && (
                                         <Col span={12}>
                                             <span>软件名称：</span>
                                             <span>{contractVo.softName}</span>
                                         </Col>
-                                    </Row>
-                                )}
+                                    )}
+                                    <Col span={12}>
+                                        <Button size='small' className='history-btn' onClick={this.onPlanSearch}>
+                                            方案查询
+                                        </Button>
+                                    </Col>
+                                </Row>
+
                                 <Row span={24}>
                                     <span>附件：</span>
                                     <div className='img-box'>
@@ -682,6 +711,30 @@ export default class RepairOrder extends Component {
                                         </Row>
                                     </div>
                                 )}
+                                <Row>
+                                    <Divider />
+                                    <Col span={18} style={{ marginBottom: '0' }}>
+                                        <Form.Item label='维修方案：' name='fixContent'>
+                                            <Input.TextArea />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Divider />
+                                    <Col span={18}>
+                                        <Form.Item label='转交工程师：' name='engineerName'>
+                                            <Select placeholder='请选择工程师' labelInValue>
+                                                {engineerList.map(item => {
+                                                    return (
+                                                        <Option key={item.id} value={[item.id, item.name]}>
+                                                            {item.name}
+                                                        </Option>
+                                                    )
+                                                })}
+                                            </Select>
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
                                 {userDevice !== null && (
                                     <div>
                                         <Divider />
@@ -729,34 +782,6 @@ export default class RepairOrder extends Component {
                                         </Row>
                                     </div>
                                 )}
-                                <Row>
-                                    <Divider />
-                                    <Col span={18} style={{ marginBottom: '0' }}>
-                                        <Form.Item label='维修方案：' name='fixContent'>
-                                            <Input.TextArea />
-                                        </Form.Item>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Divider />
-                                    <Col span={18}>
-                                        <Form.Item label='转交工程师：' name='engineerName'>
-                                            <Select
-                                                mode='multiple'
-                                                placeholder=''
-                                                labelInValue
-                                                value={engineerValue}
-                                                notFoundContent={engineerFetching ? <Spin size='small' /> : null}
-                                                filterOption={false}
-                                                onSearch={this.fetchEngineer}
-                                                onChange={this.engineerChange}>
-                                                {engineerList.map(d => (
-                                                    <Option key={d.id}>{d.name}</Option>
-                                                ))}
-                                            </Select>
-                                        </Form.Item>
-                                    </Col>
-                                </Row>
                             </div>
                             <Form.Item style={{ marginBottom: '0px' }}>
                                 <Button
@@ -960,6 +985,33 @@ export default class RepairOrder extends Component {
                         this.setState({ previewVisible: false })
                     }}>
                     <img alt='example' className='preview-image' src={previewImage} />
+                </Modal>
+
+                {/* 方案查询 */}
+                <Modal
+                    wrapClassName='repair-history-modal'
+                    title='方案查询'
+                    visible={planSearchVisible}
+                    zIndex={2}
+                    centered
+                    onCancel={() => {
+                        this.setState({ planSearchVisible: false })
+                    }}
+                    footer={null}>
+                    <div className='rh-box scroll'>
+                        {planList.length > 0 ? (
+                            planList.map((item, index) => {
+                                return (
+                                    <div key={index}>
+                                        <p>{item.contentInfo}</p>
+                                        {planList.length > 1 && <Divider />}
+                                    </div>
+                                )
+                            })
+                        ) : (
+                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                        )}
+                    </div>
                 </Modal>
             </Layout>
         )
