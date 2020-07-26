@@ -89,7 +89,9 @@ export default class RepairOrder extends Component {
     // 获取维修单列表
     getRepairOrderList = () => {
         const { orderStatus, startPage, pageSize } = this.state
+        const uid = localStorage.getItem('uid')
         const model = {
+            fixId: orderStatus !== '0' ? uid : '',
             orderStatus,
             startPage,
             pageSize
@@ -885,6 +887,17 @@ export default class RepairOrder extends Component {
                                 )}
                             </div>
                         </Row>
+                        <div>
+                            <Divider />
+                            <Row span={24}>
+                                <Col span={24}>
+                                    <span style={{ verticalAlign: 'top' }}>维修方案：</span>
+                                    <span style={{ width: '43rem', display: 'inline-block' }}>
+                                        {contractVo.fixContent || '无'}
+                                    </span>
+                                </Col>
+                            </Row>
+                        </div>
                         {fixVo !== null && (
                             <div>
                                 <Divider />

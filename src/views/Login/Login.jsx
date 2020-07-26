@@ -24,8 +24,10 @@ class Login extends Component {
                     localStorage.setItem('userName', JSON.stringify(res.data.data.userName))
                     localStorage.setItem('token', res.data.data.token)
                     localStorage.setItem('uid', res.data.data.uid)
-                    this.props.history.push('/')
-                    message.success('登录成功!')
+                    message.success('登录成功!', 0.5).then(() => {
+                        this.props.history.push('/index')
+                        window.location.reload()
+                    })
                 } else {
                     // 这里处理一些错误信息
                     message.error(res.data.msg)
