@@ -14,7 +14,8 @@ import {
     Radio,
     Pagination,
     Empty,
-    Input
+    Input,
+    Space
 } from 'antd'
 import '@/style/view-style/repairOrder.scss'
 import { PlusOutlined } from '@ant-design/icons'
@@ -353,6 +354,20 @@ export default class RepairOrder extends Component {
         })
     }
 
+    // 列表接单
+    onJieOrder = id => {
+        axios
+            .get(`${APIPad}/receiving?id=${id}`)
+            .then(res => {
+                if (res.data.code === 200) {
+                    this.getRepairOrderList()
+                } else {
+                    message.error(res.data.msg)
+                }
+            })
+            .catch(err => {})
+    }
+
     render() {
         const {
             startPage,
@@ -406,14 +421,24 @@ export default class RepairOrder extends Component {
                                                 <span className='p-span'>{item.contractName}</span>
                                             </p>
                                             <p className='text-p'>{item.content}</p>
-                                            <Button
-                                                size='small'
-                                                className='detail-btn'
-                                                onClick={() => {
-                                                    this.onOrderDetail(item)
-                                                }}>
-                                                详情
-                                            </Button>
+                                            <Space style={{ float: 'right' }}>
+                                                <Button
+                                                    size='small'
+                                                    className='detail-btn'
+                                                    onClick={() => {
+                                                        this.onJieOrder(item.id)
+                                                    }}>
+                                                    接单
+                                                </Button>
+                                                <Button
+                                                    size='small'
+                                                    className='detail-btn'
+                                                    onClick={() => {
+                                                        this.onOrderDetail(item)
+                                                    }}>
+                                                    详情
+                                                </Button>
+                                            </Space>
                                             <Divider />
                                         </div>
                                     )
