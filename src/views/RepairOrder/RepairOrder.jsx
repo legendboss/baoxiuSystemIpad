@@ -390,7 +390,8 @@ export default class RepairOrder extends Component {
             previewVisible,
             previewImage,
             planSearchVisible,
-            planList
+            planList,
+            orderStatus
         } = this.state
 
         const uploadButton = (
@@ -422,14 +423,16 @@ export default class RepairOrder extends Component {
                                             </p>
                                             <p className='text-p'>{item.content}</p>
                                             <Space style={{ float: 'right' }}>
-                                                <Button
-                                                    size='small'
-                                                    className='detail-btn'
-                                                    onClick={() => {
-                                                        this.onJieOrder(item.id)
-                                                    }}>
-                                                    接单
-                                                </Button>
+                                                {orderStatus === '0' && (
+                                                    <Button
+                                                        size='small'
+                                                        className='detail-btn'
+                                                        onClick={() => {
+                                                            this.onJieOrder(item.id)
+                                                        }}>
+                                                        接单
+                                                    </Button>
+                                                )}
                                                 <Button
                                                     size='small'
                                                     className='detail-btn'
