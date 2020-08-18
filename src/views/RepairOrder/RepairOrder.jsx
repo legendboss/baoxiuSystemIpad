@@ -15,7 +15,8 @@ import {
     Pagination,
     Empty,
     Input,
-    Space
+    Space,
+    Checkbox
 } from 'antd'
 import '@/style/view-style/repairOrder.scss'
 import { PlusOutlined } from '@ant-design/icons'
@@ -63,7 +64,8 @@ export default class RepairOrder extends Component {
             previewVisible: false,
             previewImage: '',
             planSearchVisible: false,
-            planList: [] // 方案查询数据
+            planList: [], // 方案查询数据
+            plainId: 0
         }
     }
 
@@ -236,7 +238,7 @@ export default class RepairOrder extends Component {
 
     // model 完成
     arHandleOk = e => {
-        const { fileList, orderDetailInfo, userDevice } = this.state
+        const { fileList, orderDetailInfo, userDevice, plainId } = this.state
         console.log(e)
         console.log(fileList)
         // if (fileList.length <= 0) {
@@ -267,7 +269,8 @@ export default class RepairOrder extends Component {
             reFixName: e.engineerName ? e.engineerName.key[1] : '',
             orderId: orderDetailInfo.id,
             userDevice,
-            fixContent: e.fixContent
+            fixContent: e.fixContent,
+            knowledgeId: plainId
         }
         axios
             .post(`${APIPad}/finishOrder`, model)
@@ -289,7 +292,8 @@ export default class RepairOrder extends Component {
     onCloseResetModel = () => {
         this.setState({
             ingRepairDetailVisible: false,
-            fileList: []
+            fileList: [],
+            plainId: 0
         })
         this.formRef.current.resetFields()
     }
@@ -368,6 +372,18 @@ export default class RepairOrder extends Component {
             .catch(err => {})
     }
 
+    // 设置方案
+    onPlanSet = item => {
+        this.setState({
+            plainId: item.id,
+            planSearchVisible: false
+        })
+        // 回显数据
+        this.formRef.current.setFieldsValue({
+            fixContent: item.contentInfo
+        })
+    }
+
     render() {
         const {
             startPage,
@@ -391,7 +407,8 @@ export default class RepairOrder extends Component {
             previewImage,
             planSearchVisible,
             planList,
-            orderStatus
+            orderStatus,
+            plainId
         } = this.state
 
         const uploadButton = (
@@ -921,7 +938,7 @@ export default class RepairOrder extends Component {
                                 <Col span={24}>
                                     <span style={{ verticalAlign: 'top' }}>维修方案：</span>
                                     <span style={{ width: '43rem', display: 'inline-block' }}>
-                                        {contractVo.fixContent || '无'}
+                                        {fixVo.fixContent || '无'}
                                     </span>
                                 </Col>
                             </Row>
@@ -1044,7 +1061,14 @@ export default class RepairOrder extends Component {
                             planList.map((item, index) => {
                                 return (
                                     <div key={index}>
-                                        <p>{item.contentInfo}</p>
+                                        <div
+                                            style={{ display: 'flex' }}
+                                            onClick={() => {
+                                                this.onPlanSet(item)
+                                            }}>
+                                            <Checkbox checked={plainId > 0 && plainId === item.id} />
+                                            <p style={{ margin: '0 0 0 5px' }}>{item.contentInfo}</p>
+                                        </div>
                                         {planList.length > 1 && <Divider />}
                                     </div>
                                 )
