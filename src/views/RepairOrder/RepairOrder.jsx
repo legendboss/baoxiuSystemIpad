@@ -326,19 +326,20 @@ export default class RepairOrder extends Component {
         if (contractVo.softName !== '') {
             keyWord = contractVo.softName
         } else {
-            switch (contractVo.fixType) {
-                case 0:
-                    keyWord = '系统'
-                    break
-                case 1:
-                    keyWord = '硬件'
-                    break
-                case 3:
-                    keyWord = '其他'
-                    break
-                default:
-                    break
-            }
+            keyWord = contractVo.content
+            // switch (contractVo.fixType) {
+            //     case 0:
+            //         keyWord = '系统'
+            //         break
+            //     case 1:
+            //         keyWord = '硬件'
+            //         break
+            //     case 3:
+            //         keyWord = '其他'
+            //         break
+            //     default:
+            //         break
+            // }
         }
         const model = { keyWord: keyWord }
         axios
