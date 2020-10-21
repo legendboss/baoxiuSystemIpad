@@ -83,7 +83,10 @@ export default class KnowledgeBase extends Component {
                                 {listData.map((item, index) => {
                                     return (
                                         <div key={index}>
-                                            <p className='text-p'>{item.contentInfo}</p>
+                                            <div style={{ display: 'flex' }}>
+                                                <p className='text-p1'>{item.questionStr}</p>
+                                                <p className='text-p'>{item.contentInfo}</p>
+                                            </div>
                                             <Divider />
                                         </div>
                                     )

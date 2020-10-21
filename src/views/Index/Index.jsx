@@ -8,7 +8,8 @@ import aside1 from '@/assets/icon/aside1.svg'
 import aside4 from '@/assets/icon/aside4.svg'
 import aside7 from '@/assets/icon/aside7.svg'
 import aside8 from '@/assets/icon/aside8.svg'
-const wsNewOrder = new WebSocket(`ws://qikeqike.qicp.vip/newOrder`)
+const wsNewOrder = new WebSocket(`ws://203.156.231.107:8092/newOrder`)
+// const wsNewOrder = new WebSocket(`ws://qikeqike.qicp.vip/newOrder`)
 // const wsNewOrder = new WebSocket(`ws://172.16.2.218:8092/newOrder`)
 
 class Index extends Component {

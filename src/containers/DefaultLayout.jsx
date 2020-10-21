@@ -17,7 +17,8 @@ import AppDataShow from './AppDataShow.jsx'
 
 const { Content } = Layout
 const uid = localStorage.getItem('uid')
-const wsNewMessage = new WebSocket(`ws://qikeqike.qicp.vip/newMessage/${uid}`)
+const wsNewMessage = new WebSocket(`ws://203.156.231.107:8092/newMessage/${uid}`)
+// const wsNewMessage = new WebSocket(`ws://qikeqike.qicp.vip/newMessage/${uid}`)
 // const wsNewMessage = new WebSocket(`ws://172.16.2.218:8092/newMessage/${uid}`)
 
 class DefaultLayout extends Component {
