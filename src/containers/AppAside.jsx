@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import { Layout } from 'antd'
 import CustomMenu from '@/components/CustomMenu'
 
+import logo from '@/assets/images/logo.jpg'
+
 const { Sider } = Layout
 
 const AppAside = props => {
@@ -10,7 +12,9 @@ const AppAside = props => {
     return (
         <Sider width={148} collapsedWidth={54} className='aside my-aside' collapsed={menuToggle}>
             <div className='logo'>
-                <a href='#/index'>logo公司名称</a>
+                <a href='#/index'>
+                    <img src={logo} alt='' />
+                </a>
             </div>
             <CustomMenu menu={menu}></CustomMenu>
         </Sider>
